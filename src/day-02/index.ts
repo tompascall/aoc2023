@@ -1,36 +1,37 @@
 import { getPuzzle } from '../utils/get-puzzle';
 import { getLines } from '../utils/parse';
 
-const rules = {
-  red: 12,
-  green: 13,
-  blue: 14,
-};
+type colors = 'red' | 'green' | 'blue';
 
 const getLineResult = (line: string) => {
-  // it returns game id if game is possible otherwise 0
-  const [head, tail] = line.split(':');
-  if (!head || !tail) {
+  const [_, tail] = line.split(':');
+  if (!tail) {
     return 0;
   }
-
-  const id = parseInt(head.split(' ')[1]);
   const sets = tail.split(';');
-  const isValid = sets.every((set) =>
-    set
-      .trim()
-      .split(',')
-      .every((item) => {
-        const [count, color] = item.trim().split(' ');
-        return parseInt(count) <= rules[color as keyof typeof rules];
-      })
+
+  const maxColors = sets.reduce(
+    (maxColors, set) => {
+      set
+        .trim()
+        .split(',')
+        .forEach((item) => {
+          const [count, color] = item.trim().split(' ') as [string, colors];
+          if (maxColors[color] < parseInt(count)) {
+            maxColors[color] = parseInt(count);
+          }
+        });
+      return maxColors;
+    },
+    { red: 1, green: 1, blue: 1 }
   );
-  return isValid ? id : 0;
+
+  return Object.values(maxColors).reduce((acc, value) => acc * value, 1);
 };
 
 export const puzzle = (text: string) => {
   const lines = getLines(text);
-  return lines.reduce((acc, line, index) => {
+  return lines.reduce((acc, line) => {
     const result = getLineResult(line);
     return acc + result;
   }, 0);
