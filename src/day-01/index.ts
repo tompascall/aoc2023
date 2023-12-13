@@ -1,4 +1,5 @@
 import { getPuzzle } from '../utils/get-puzzle';
+import { getLines } from '../utils/parse';
 
 const digitMap: { [key: string]: number } = {
   one: 1,
@@ -13,8 +14,6 @@ const digitMap: { [key: string]: number } = {
 };
 
 const getNumber = (text: string) => digitMap[text] || parseInt(text);
-
-const getLines = (text: string) => text.split('\n');
 
 const getLineResult = (line: string) => {
   const reg = /(?=(\d{1}|one|two|three|four|five|six|seven|eight|nine))/g;
@@ -43,6 +42,4 @@ const main = async () => {
 
 if (require.main === module) {
   main();
-} else {
-  console.log('not main');
 }
